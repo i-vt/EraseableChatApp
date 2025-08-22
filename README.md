@@ -9,9 +9,19 @@ openjdk 23 2024-09-17
 OpenJDK Runtime Environment (build 23+37-2369)
 OpenJDK 64-Bit Server VM (build 23+37-2369, mixed mode, sharing)
 ```
-2. Certs
+2. Certs (only needed for prod version)
 ```
-sudo certbot certonly --standalone -d advertisementcdn.site -d www.advertisementcdn.site
+sudo certbot certonly --standalone -d placeholderdomaingoeshere.net -d www.placeholderdomaingoeshere.net
+
+cd /etc/letsencrypt/live/placeholderdomaingoeshere.net
+
+sudo openssl pkcs12 -export \
+  -in fullchain.pem \
+  -inkey privkey.pem \
+  -out keystore.p12 \
+  -name tomcat \
+  -passout pass:a234sdfjyttgfh4sSS
+
 ```
 
 ## Production
