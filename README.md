@@ -1,5 +1,10 @@
 # EraseableChatApp
 In-memory chat that never touches the disk.
+## Features
+- Chats are not touching the disk
+- Passwords are accepted as time-based one time passwords (TOTPs)
+- Any member can /drop the application
+- File transfer is in-memory only
 
 # Setup
 1. Java
