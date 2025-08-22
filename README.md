@@ -10,6 +10,7 @@ OpenJDK Runtime Environment (build 23+37-2369)
 OpenJDK 64-Bit Server VM (build 23+37-2369, mixed mode, sharing)
 ```
 2. Certs (only needed for prod version)
+
 ```
 sudo certbot certonly --standalone -d placeholderdomaingoeshere.net -d www.placeholderdomaingoeshere.net
 
