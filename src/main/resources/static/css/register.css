@@ -1,0 +1,115 @@
+:root {
+  --main-bg: #011627;
+  --dark-bg: #000e1f;
+  --light-bg: #0b253b;
+  --text: #d6deeb;
+  --accent: #82aaff;
+  --heading: #ffffff;
+  --opacity: 50%;
+  --border-color: color-mix(in srgb, currentColor var(--opacity), transparent);
+  --radius: 10px;
+  --table-border-width: 1px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+main#container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+#register {
+  background-color: var(--dark-bg);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+#register h2 {
+  margin: 10px 0;
+  text-align: center;
+  color: var(--heading);
+}
+
+#register input[type="text"],
+#register input[type="password"] {
+  width: 100%;
+  padding: 9px;
+  margin: 10px 0;
+  border-radius: 5px;
+  background-color: var(--light-bg);
+  border: none;
+  color: var(--text);
+}
+
+.tooltip-box {
+  font-size: 12px;
+  color: var(--text);
+  background-color: var(--light-bg);
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  margin: 15px 0px;
+  text-align: center;
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.btn-row button {
+  flex: 1;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  background-color: var(--dark-bg);
+  padding: 7px 15px;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn-row button:hover {
+  background-color: var(--accent);
+  color: black;
+}
+
+@media (max-width: 480px) {
+  #register {
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  #register input {
+    padding: 8px;
+  }
+
+  .btn-row {
+    flex-direction: column;
+  }
+  .checkbox-row {
+  text-align: center;
+  margin: 10px 0;
+  color: var(--text);
+  font-size: 14px;
+}
+
+}

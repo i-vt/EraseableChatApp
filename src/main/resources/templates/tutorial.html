@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}"></head>
+
+<body>
+  <div th:replace="~{fragments/header :: header}"></div>
+
+  <main id="tutorial">
+    <h2>Getting Started</h2>
+    <p class="lede">
+      This quick tutorial walks you through the essentials: login, chat modes (IRC/Professional),
+      grouping, emoji behavior, uploads, peer-to-peer share, and keyboard shortcuts.
+    </p>
+
+    <nav class="toc" aria-label="Table of contents">
+      <a href="#login">1. Log in</a>
+      <a href="#chat">2. Chat Basics</a>
+      <a href="#modes">3. Chat Modes (IRC / Professional)</a>
+      <a href="#grouping">4. Message Grouping Rules</a>
+      <a href="#emoji">5. Emoji Behavior</a>
+      <a href="#upload">6. Upload & Share</a>
+      <a href="#p2p">7. P2P Secure Share</a>
+      <a href="#shortcuts">8. Keyboard Shortcuts</a>
+      <a href="#themes">9. Light/Dark Theme</a>
+      <a href="#faq">10. FAQ</a>
+    </nav>
+
+    <section id="login">
+      <h3>1) Log in</h3>
+      <ol>
+        <li>Go to <code>/login</code> and enter your <strong>username</strong> and your <strong>one-time code</strong>.</li>
+        <li>No account? Ask an admin for a registration code and visit <code>/register</code>.</li>
+      </ol>
+    </section>
+
+    <section id="chat">
+      <h3>2) Chat Basics</h3>
+      <ul>
+        <li>Press <kbd>Enter</kbd> to send.</li>
+        <li>Mention someone with <code>@username</code> or everyone with <code>@everyone</code>.</li>
+        <li>Emojis via shortcodes like <code>:smile:</code> or the 😀 picker.</li>
+        <li>Paste/upload images/videos — they’re encrypted client-side before sending.</li>
+      </ul>
+      <p class="callout tip">
+        New messages can play a sound, flicker the tab title, and (if permitted) show a desktop notification.
+      </p>
+    </section>
+
+    <section id="modes">
+      <h3>3) Chat Modes</h3>
+      <ul>
+        <li><strong>IRC mode</strong> — compact, single-line feel: <em>time + sender + message</em> all inline.</li>
+        <li><strong>Professional mode</strong> — iMessage-style bubbles with left/right alignment.</li>
+      </ul>
+      <p class="callout note">
+        Toggle modes with the “Switch to Professional / Switch to IRC” button on the Chat page (or <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>M</kbd> if enabled).
+      </p>
+    </section>
+
+    <section id="grouping">
+      <h3>4) Message Grouping Rules</h3>
+      <ul>
+        <li>Messages from the <strong>same sender</strong> within <strong>5 minutes</strong> are grouped.</li>
+        <li><strong>Professional mode:</strong> subsequent messages are appended inside the <em>same bubble</em>.</li>
+        <li><strong>IRC mode:</strong> subsequent messages appear on the <em>same line</em> after a line break, keeping one <code>&lt;li&gt;</code> per group.</li>
+        <li>Grouping ends when a different user posts or when the 5-minute window passes.</li>
+        <li>There’s always a visual line break between groups.</li>
+      </ul>
+    </section>
+
+    <section id="emoji">
+      <h3>5) Emoji Behavior</h3>
+      <ul>
+        <li><strong>Inline with text:</strong> emojis are normalized to <code>30×30</code> pixels, aligned with the baseline, and respect your typed spacing.</li>
+        <li><strong>Single-emoji message:</strong> one emoji by itself is rendered at <code>100×100</code> and centered in the bubble.</li>
+        <li><strong>Multiple-emoji message (no text):</strong> each emoji is <code>30×30</code>; they wrap naturally on small screens.</li>
+        <li>We preserve spacing around emojis and prevent awkward line breaks right next to them for readability.</li>
+      </ul>
+    </section>
+
+    <section id="upload">
+      <h3>6) Upload & Share</h3>
+      <ol>
+        <li>Visit <code>/upload</code> and choose a file.</li>
+        <li>Copy the <strong>Download URL</strong> and <strong>Password</strong> when done.</li>
+        <li>The password is shown only once — save it.</li>
+      </ol>
+    </section>
+
+    <section id="p2p">
+      <h3>7) P2P Secure Share</h3>
+      <ol>
+        <li>Open <code>/p2p</code> and share the session link.</li>
+        <li>Share the <strong>Secret Key</strong> out-of-band, paste it, then <em>Save Key</em>.</li>
+        <li>Select a file and click <em>Send Encrypted File</em>.</li>
+      </ol>
+      <p class="callout note">If decryption fails, verify that both peers use the same key.</p>
+    </section>
+
+    <section id="shortcuts">
+      <h3>8) Keyboard Shortcuts</h3>
+
+      <h4>8.1 Shortcut Palette & Quick Actions</h4>
+      <ul class="grid">
+        <li><kbd>Ctrl</kbd> + <kbd>/</kbd> — Open the shortcuts palette</li>
+        <li>Inside palette: press the key shown on each action to execute it</li>
+      </ul>
+
+      <h4>8.2 Quick Navigation (from palette)</h4>
+      <ul class="grid">
+        <li><kbd>H</kbd> — Dashboard</li>
+        <li><kbd>C</kbd> — Chat</li>
+        <li><kbd>U</kbd> — Upload</li>
+        <li><kbd>P</kbd> — P2P</li>
+        <li><kbd>D</kbd> — Drop</li>
+        <li><kbd>R</kbd> — Register</li>
+        <li><kbd>L</kbd> — Login</li>
+        <li><kbd>K</kbd> — Cycle key pages</li>
+      </ul>
+
+      <h4>8.3 Theme & Toggles (from palette)</h4>
+      <ul class="grid">
+        <li><kbd>T</kbd> — Toggle Light/Dark</li>
+        <li><kbd>F</kbd> — Toggle layout chrome (hide header/footer)</li>
+        <li><kbd>G</kbd> — Toggle text shadows</li>
+        <li><kbd>B</kbd> — Toggle message styling</li>
+      </ul>
+
+      <h4>8.4 Legacy Combos (still supported)</h4>
+      <ul class="grid">
+        <li><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd> — Toggle Light/Dark</li>
+        <li><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>H/C/U/P/D/R/L</kbd> — Dashboard / Chat / Upload / P2P / Drop / Register / Login</li>
+        <li><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F</kbd> — Toggle layout chrome</li>
+        <li><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>G</kbd> — Toggle text shadows</li>
+        <li><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>B</kbd> — Toggle message styling</li>
+        <li><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Tab</kbd> — Cycle forward through key pages</li>
+        <li><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>Tab</kbd> — Cycle backward</li>
+        <li><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>M</kbd> — Toggle IRC/Professional chat mode (if available)</li>
+      </ul>
+    </section>
+
+    <section id="themes">
+      <h3>9) Light/Dark Theme</h3>
+      <p>Switch themes using the palette key <kbd>T</kbd> or legacy <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd>. Your choice is remembered per browser.</p>
+    </section>
+
+    <section id="faq">
+      <h3>10) FAQ</h3>
+
+      <details>
+        <summary>Where are messages decrypted?</summary>
+        <p>In your browser. Messages/files use AES-GCM and are decrypted client-side.</p>
+      </details>
+
+      <details>
+        <summary>I lost the upload password. Can I recover it?</summary>
+        <p>No — it’s shown only once. Re-upload to get a new URL/password.</p>
+      </details>
+
+      <details>
+        <summary>Why didn’t I get a desktop notification?</summary>
+        <p>Make sure you granted permission and the tab wasn’t focused when the mention arrived.</p>
+      </details>
+
+      <details>
+        <summary>Why does my emoji look “big” or “small”?</summary>
+        <p>
+          Emojis are normalized: <em>30×30</em> in text; a single-emoji message becomes <em>100×100</em>.
+          We also preserve spacing around emojis so they don’t collide with text.
+        </p>
+      </details>
+
+      <details>
+        <summary>How are messages grouped?</summary>
+        <p>
+          Messages from the same sender within 5 minutes are grouped. In Professional mode, they’re appended to the same bubble.
+          In IRC mode, they stay in one list item with line breaks between each message. A new user or a 5-minute gap starts a new group.
+        </p>
+      </details>
+    </section>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+  <link rel="stylesheet" th:href="@{/css/tutorial.css}">
+</body>
+</html>

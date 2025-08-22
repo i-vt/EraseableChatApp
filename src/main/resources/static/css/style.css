@@ -1,0 +1,113 @@
+/* --- DARK is default (already in your file) --- */
+:root {
+  --main-bg: #011627;
+  --dark-bg: #000e1f;
+  --light-bg: #0b253b;
+  --text: #d6deeb;
+  --accent: #82aaff;
+  --heading: #ffffff;
+  --opacity: 50%;
+  --border-color: color-mix(in srgb, currentColor var(--opacity), transparent);
+  --radius: 10px;
+  --table-border-width: 1px;
+}
+
+/* --- LIGHT THEME OVERRIDES (applied when <html class="theme-light">) --- */
+/* Light theme (eye-friendly) */
+:root.theme-light {
+  /* Softer surfaces */
+  --main-bg: #f7f8fb;   /* page bg (off-white, slight blue) */
+  --dark-bg: #ffffff;   /* cards/panels */
+  --light-bg: #eef2f7;  /* secondary surfaces */
+
+  /* Comfortable contrast text */
+  --text: #243041;      /* ~gray-800 with a blue tilt */
+  --heading: #101827;   /* slightly darker for titles */
+
+  /* Calmer accent (less neon, still visible) */
+  --accent: #3b82f6;    /* soft blue */
+  /* If you want even softer: #4f8ef7 or #4c7df2 */
+
+  /* Subtle borders */
+  --opacity: 28%;
+  --border-color: color-mix(in srgb, currentColor var(--opacity), transparent);
+
+  /* Keep radius & table width */
+  --radius: 10px;
+  --table-border-width: 1px;
+}
+
+/* Global light-mode polish */
+:root.theme-light body {
+  background-color: var(--main-bg);
+  color: var(--text);
+}
+
+/* Reduce glare on large blocks in light mode */
+:root.theme-light nav ul,
+:root.theme-light footer,
+:root.theme-light #upload,
+:root.theme-light main,
+:root.theme-light .chat #messageArea {
+  box-shadow: 0 2px 10px rgba(16, 24, 39, 0.05);
+  border: 1px solid var(--border-color);
+}
+
+/* Chat bubbles: soften fill/contrast */
+:root.theme-light #messageArea li span:last-child {
+  background: #f3f6fb;          /* gentler than pure white */
+  color: var(--text) !important;
+}
+
+/* Images/emoji chips on light bg */
+:root.theme-light img {
+  background-color: #f0f3f8 !important;
+}
+:root.theme-light img.emoji,
+:root.theme-light #emojiPicker .emoji-button {
+  background-color: transparent !important;
+}
+
+/* Links/hover states—less harsh */
+:root.theme-light a:hover,
+:root.theme-light nav ul li:hover a {
+  background-color: #e7eef9 !important;
+}
+
+/* Digital clock accent stays readable on light */
+:root.theme-light .on,
+:root.theme-light #utc-date {
+  color: var(--accent);
+}
+
+/* Comfortable defaults for reading */
+:root.theme-light * {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+:root.theme-light body {
+  line-height: 1.6;
+}
+
+body {
+  background-color: var(--main-bg);
+  color: var(--text);
+}
+* {
+  box-sizing: border-box;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+
+*::selection {
+  background-color: var(--accent);
+  color: black;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;600&family=Fira+Code&display=swap");
+
+/* Base font */
+* {
+  font-family: "Inter", sans-serif !important;
+}

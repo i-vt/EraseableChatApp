@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{fragments/header :: head}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/chat.css}" />
+</head>
+
+<body>
+  <div th:replace="~{fragments/header :: header}"></div>
+
+  <!-- Default: IRC look -->
+  <div class="chat chat--irc" id="chatRoot">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div>
+          <h2 style="margin:6px 0;">Chat Room</h2>
+          <p th:text="'Logged in as: ' + ${session.user}" style="opacity:.8; margin:0;"></p>
+        </div>
+
+        <!-- Optional toggle button (persists in localStorage) -->
+        <button type="button" id="chatStyleToggle"
+                title="Toggle chat style (IRC / Professional)"
+                style="padding:6px 10px; border-radius:8px; border:1px solid var(--border-color);
+                       background:var(--dark-bg); color:var(--text); cursor:pointer;">
+          Switch to Professional
+        </button>
+      </div>
+
+      <ul id="messageArea">
+          <li th:each="msg : ${messages}" 
+              th:data-sender="${msg.sender}" 
+              th:data-iv="${msg.iv}"
+              th:data-content="${msg.content}"
+              th:data-timestamp="${#dates.format(msg.timestamp, 'yyyy-MM-dd''T''HH:mm:ss.SSS''Z''')}">
+              [Encrypted message...]
+          </li>
+      </ul>
+
+      <div class="chat-controls">
+        <form id="chatForm" autocomplete="off">
+          <div class="input-and-buttons-container">
+            <!-- keep this one wrapper so suggestions can anchor to it -->
+            <div id="messageInputContainer">
+              <textarea id="messageInput"
+                        placeholder="Type your message (Shift+Enter = newline)"
+                        autocomplete="off"
+                        rows="1"></textarea>
+
+              <!-- 👇 Added: emoji picker container (anchored via absolute positioning) -->
+              <div id="emojiPicker" style="display:none"></div>
+            </div>
+
+            <!-- buttons are now direct siblings; no secondary containers -->
+            <button type="button" id="emojiToggleBtn" class="tool-btn is-icon" title="Emoji">😀</button>
+
+            <button type="button" id="uploadBtn" class="tool-btn" title="Upload">Upload</button>
+            <input type="file" id="fileInput" accept="image/*,video/*" hidden>
+
+            <button type="submit" class="send-btn">Send</button>
+          </div>
+        </form>
+      </div>
+
+  </div>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+  <script type="module" src="/js/chat-main.js"></script>
+  <script type="module" src="/js/session-checker.js"></script>
+
+  <script th:inline="javascript">
+      /*<![CDATA[*/
+      window.chatConfig = {
+          username: /*[[${session.user}]]*/ 'guest'
+      };
+      window.chatUsernames = [[${ usernames }]];
+      /*]]>*/
+  </script>
+
+  <script>
+    // Optional style toggle (button + Ctrl+Alt+M). Saves to localStorage.
+    (function () {
+      const root = document.getElementById('chatRoot');
+      const btn  = document.getElementById('chatStyleToggle');
+      const KEY  = 'chatStyle';  // 'irc' | 'pro'
+
+      function apply(style) {
+        const isPro = style === 'pro';
+        root.classList.toggle('chat--irc', !isPro);
+        root.classList.toggle('chat--pro', isPro);
+        if (btn) btn.textContent = isPro ? 'Switch to IRC' : 'Switch to Professional';
+      }
+
+      // Load saved preference (default to IRC)
+      const saved = localStorage.getItem(KEY) || 'irc';
+      apply(saved);
+
+      // Button click
+      btn?.addEventListener('click', () => {
+        const next = root.classList.contains('chat--irc') ? 'pro' : 'irc';
+        localStorage.setItem(KEY, next);
+        apply(next);
+      });
+
+      // Keyboard: Ctrl+Alt+M
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.altKey && e.code === 'KeyM') {
+          const next = root.classList.contains('chat--irc') ? 'pro' : 'irc';
+          localStorage.setItem(KEY, next);
+          apply(next);
+        }
+      });
+    })();
+
+    // Focus input on load
+    document.getElementById('messageInput').focus();
+  </script>
+</body>
+</html>

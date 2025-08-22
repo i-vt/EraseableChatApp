@@ -1,0 +1,77 @@
+
+/* Digital Clock */
+#utc-date {
+  margin-top: 4px;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+#digital-clock-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.digital-clock {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 6px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background-color: var(--dark-bg);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.digit {
+  display: inline-block;
+  width: 16px;
+  height: 32px;
+  position: relative;
+}
+
+.segment {
+  position: absolute;
+  width: 3px;
+  height: 12px;
+  background: #333;
+  transition: background 0.2s;
+}
+
+.on {
+  background: var(--accent);
+}
+
+.seg-a { top: 0; left: 2px; width: 12px; height: 3px; }
+.seg-b { top: 1px; right: 0; }
+.seg-c { bottom: 1px; right: 0; }
+.seg-d { bottom: 0; left: 2px; width: 12px; height: 3px; }
+.seg-e { bottom: 1px; left: 0; }
+.seg-f { top: 1px; left: 0; }
+.seg-g { top: 14px; left: 2px; width: 12px; height: 3px; }
+
+.colon {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 32px;
+  width: 6px;
+}
+
+.colon div {
+  width: 3px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.label {
+  font-size: 12px;
+  color: var(--text);
+  margin-top: 4px;
+}

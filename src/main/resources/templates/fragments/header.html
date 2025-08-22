@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" th:href="@{/css/header.css}" />
+  <script src="/js/theme-switcher.js"></script>
+  <script src="/js/shortcuts.js"></script>
+</head>
+
+
+<body>
+  <div th:fragment="header">
+  <nav>
+    <ul>
+      <li th:if="${session.user != null}"><a th:href="@{/dashboard}">Dashboard</a></li>
+      <li th:if="${session.user != null}"><a th:href="@{/chat}">Chat</a></li>
+      <li th:if="${session.user != null}"><a th:href="@{/upload}">Upload</a></li>
+      <li th:if="${session.user != null}"><a th:href="@{/p2p}">P2P</a></li>
+      <li th:if="${session.user == null}"><a th:href="@{/login}">Login</a></li>
+      <li th:if="${session.user == null}"><a th:href="@{/register}">Register</a></li>
+      <li th:if="${session.user != null}">
+        <a th:href="@{/logout}" class="logout-link" style="color: inherit; text-decoration: none;">Logout</a>
+      </li>
+    </ul>
+  </nav>
+
+  </div>
+</body>
+</html>

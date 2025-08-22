@@ -1,0 +1,61 @@
+/* Header — unified glow + colors that match the footer */
+
+:root {
+  /* Use the same glow color everywhere (header + footer) */
+  --glow-color: var(--accent);
+}
+
+/* Page chrome (kept lightweight; main colors come from global style.css) */
+body {
+  background-color: var(--main-bg);
+  color: var(--text);
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Navigation styles */
+nav {
+  margin-bottom: 15px;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  justify-content: space-around;
+  max-width: 800px;               /* match footer width */
+  margin: 0 auto;
+  padding: 20px;
+  background: var(--dark-bg);
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  /* unified glow */
+  box-shadow: 0 4px 12px var(--glow-color);
+}
+
+nav a {
+  text-decoration: none;
+  color: inherit !important;
+  padding: 10px 22px;
+  border-radius: 20px;
+  display: inline-block;
+  font-weight: 500;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+  /* subtle text glow to match */
+  text-shadow: 0 0 6px var(--glow-color);
+}
+
+nav ul li:hover a {
+  background-color: var(--light-bg);
+  color: var(--text) !important;
+  box-shadow: 0 0 8px var(--glow-color);
+}
+
+nav .active a {
+  background-color: var(--accent);
+  color: black !important;
+  box-shadow: 0 0 10px var(--glow-color);
+}
+
+/* Light theme polish stays consistent */
+:root.theme-light nav ul {
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--glow-color) 60%, transparent);
+}

@@ -1,0 +1,123 @@
+/* Footer — matches header glow/colors and stays stuck to the bottom */
+
+:root {
+  /* Same shared glow color as header */
+  --glow-color: var(--accent);
+  /* Adjust if you want a different fixed height for spacing compensation */
+  --footer-safe-space: 56px; /* keeps content from sitting under fixed footer */
+}
+
+/* Keep content visible above the fixed footer */
+body {
+  padding-bottom: var(--footer-safe-space);
+}
+
+/* Footer container */
+footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  width: 100%;
+  max-width: 800px;                 /* match header width */
+  margin: 0 auto;
+
+  text-align: center;
+  background-color: var(--dark-bg);
+  color: var(--text);
+
+  padding: 6px 12px;                /* reduced padding */
+  border-top-left-radius: 30px;     /* mirror header radius */
+  border-top-right-radius: 30px;
+  font-size: 13px;
+
+  /* unified glow with header */
+  text-shadow: 0 0 6px var(--glow-color);
+  box-shadow: 0 -4px 12px var(--glow-color);
+
+  z-index: 1000;
+}
+
+/* Digital Clock */
+#utc-date {
+  margin-top: 2px;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+  color: var(--accent);
+  text-shadow: 0 0 6px var(--glow-color);
+}
+
+#digital-clock-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 6px;                  /* tighter */
+}
+
+.digital-clock {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 4px 8px;                 /* reduced padding */
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background-color: var(--dark-bg);
+  box-shadow: 0 0 8px var(--glow-color);
+}
+
+.digit {
+  display: inline-block;
+  width: 16px;
+  height: 32px;
+  position: relative;
+}
+
+.segment {
+  position: absolute;
+  width: 3px;
+  height: 12px;
+  background: #333;
+  transition: background 0.2s;
+}
+
+.on {
+  background: var(--accent);
+}
+
+.seg-a { top: 0; left: 2px; width: 12px; height: 3px; }
+.seg-b { top: 1px; right: 0; }
+.seg-c { bottom: 1px; right: 0; }
+.seg-d { bottom: 0; left: 2px; width: 12px; height: 3px; }
+.seg-e { bottom: 1px; left: 0; }
+.seg-f { top: 1px; left: 0; }
+.seg-g { top: 14px; left: 2px; width: 12px; height: 3px; }
+
+.colon {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 32px;
+  width: 6px;
+}
+
+.colon div {
+  width: 3px;
+  height: 3px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.label {
+  font-size: 12px;
+  color: var(--text);
+  margin-top: 2px;
+}
+
+/* Light theme subtlety */
+:root.theme-light footer {
+  box-shadow: 0 -4px 12px color-mix(in srgb, var(--glow-color) 60%, transparent);
+}

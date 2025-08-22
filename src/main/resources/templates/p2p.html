@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P2P Secure File Share</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="/js/theme-switcher.js"></script>
+    <script src="/js/shortcuts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+
+    <style>
+        :root {
+            --main-bg: #011627;
+            --dark-bg: #000e1f;
+            --light-bg: #0b253b;
+            --text: #d6deeb;
+            --accent: #82aaff;
+            --heading: #ffffff;
+            --opacity: 50%;
+            --border-color: color-mix(in srgb, currentColor var(--opacity), transparent);
+            --radius: 10px;
+            --table-border-width: 1px;
+        }
+
+        body {
+            background-color: var(--main-bg);
+            color: var(--text);
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: var(--light-bg);
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            color: var(--heading);
+            /* border-bottom: 1px solid var(--border-color); */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        code {
+            background-color: var(--dark-bg);
+            padding: 10px;
+            border-radius: 5px;
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            color: var(--accent);
+            font-family: monospace;
+            word-break: break-word;
+            margin-top: 5px;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+            background-color: var(--dark-bg);
+            color: var(--text);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 8px;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        #keyInputSection {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            background-color: var(--accent);
+            color: var(--main-bg);
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 10px;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background-color: #a6c1ff;
+        }
+
+        .file-send-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        progress {
+            margin-top: 15px;
+            height: 16px;
+            border-radius: 5px;
+            background-color: var(--dark-bg);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        progress::-webkit-progress-bar {
+            background-color: var(--dark-bg);
+            border-radius: 5px;
+        }
+
+        progress::-webkit-progress-value {
+            background-color: var(--accent);
+            border-radius: 5px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 20px;
+            color: var(--heading);
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main>
+        <h2>Secure P2P File Sharing</h2>
+        <p>Share this session link with your peer:</p>
+        <code th:text="${sessionUrl}"></code>
+
+        <p><strong>Secret Key (Share manually!):</strong>
+            <code id="secretDisplay"></code>
+        </p>
+
+        <div id="keyInputSection">
+            <label for="keyInput"><strong>Paste Secret Key (if received):</strong></label>
+            <input type="text" id="keyInput" placeholder="Base64 key...">
+            <button onclick="saveKey()">Save Key</button>
+        </div>
+
+        <div class="file-send-row">
+            <input type="file" id="fileInput" />
+            <button onclick="sendFile()">Send Encrypted File</button>
+        </div>
+
+        <progress id="progressBar" value="0" max="100" style="display:none;"></progress>
+    </main>
+
+    <script th:inline="javascript">
+        const sessionId = /*[[${sessionId}]]*/ 'unknown';
+        const username = /*[[${session.user}]]*/ 'unknown';
+
+        const socket = new SockJS('/p2p-ws');
+        const client = Stomp.over(socket);
+        const keyStorageKey = `p2p-key-${sessionId}`;
+        let aesKey;
+
+        function generateKey() {
+            return crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+        }
+
+        function exportKey(key) {
+            return crypto.subtle.exportKey("raw", key).then(raw => btoa(String.fromCharCode(...new Uint8Array(raw))));
+        }
+
+        function importKey(base64) {
+            const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+            return crypto.subtle.importKey("raw", bytes, { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
+        }
+
+        async function initKey() {
+            let stored = sessionStorage.getItem(keyStorageKey);
+            if (stored) {
+                aesKey = await importKey(stored);
+                document.getElementById('secretDisplay').textContent = stored;
+                document.getElementById('keyInputSection').style.display = "none";
+            } else {
+                aesKey = await generateKey();
+                const exported = await exportKey(aesKey);
+                sessionStorage.setItem(keyStorageKey, exported);
+                document.getElementById('secretDisplay').textContent = exported;
+            }
+        }
+
+        function saveKey() {
+            const base64 = document.getElementById('keyInput').value.trim();
+            if (!base64) return alert("Key is empty.");
+            importKey(base64).then(key => {
+                aesKey = key;
+                sessionStorage.setItem(keyStorageKey, base64);
+                document.getElementById('secretDisplay').textContent = base64;
+                alert("Key saved! Reloading...");
+                location.reload();
+            }).catch(() => alert("Invalid key format"));
+        }
+
+        initKey();
+
+        client.connect({}, () => {
+            client.subscribe(`/topic/p2p/${sessionId}`, async message => {
+                const payload = JSON.parse(message.body);
+                if (payload.sender === username) return;
+
+                const iv = Uint8Array.from(atob(payload.iv), c => c.charCodeAt(0));
+                const data = Uint8Array.from(atob(payload.data), c => c.charCodeAt(0));
+
+                try {
+                    const decrypted = await crypto.subtle.decrypt(
+                        { name: "AES-GCM", iv: iv },
+                        aesKey,
+                        data
+                    );
+
+                    const blob = new Blob([decrypted]);
+                    const a = document.createElement("a");
+                    a.href = URL.createObjectURL(blob);
+                    a.download = payload.filename || "shared_file";
+                    a.click();
+                } catch (err) {
+                    alert("Failed to decrypt. Ensure correct key.");
+                }
+            });
+        });
+
+        async function sendFile() {
+            const file = document.getElementById('fileInput').files[0];
+            const progressBar = document.getElementById('progressBar');
+
+            if (!file) return alert("Select a file.");
+            if (file.size > 50 * 1024 * 1024) return alert("Max file size is 50MB");
+
+            const buffer = await file.arrayBuffer();
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            progressBar.style.display = 'block';
+            progressBar.value = 10;
+
+            const encrypted = await crypto.subtle.encrypt(
+                { name: "AES-GCM", iv: iv },
+                aesKey,
+                buffer
+            );
+
+            progressBar.value = 70;
+
+            const payload = {
+                sender: username,
+                filename: file.name,
+                iv: btoa(String.fromCharCode(...iv)),
+                data: btoa(String.fromCharCode(...new Uint8Array(encrypted)))
+            };
+
+            client.send(`/app/p2p/${sessionId}/file`, {}, JSON.stringify(payload));
+            progressBar.value = 100;
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('code').forEach(code => {
+                code.style.cursor = 'copy';
+                code.title = 'Click to copy';
+
+                code.addEventListener('click', () => {
+                    const originalText = code.textContent;
+                    navigator.clipboard.writeText(originalText).then(() => {
+                        code.textContent = 'Copied';
+                        setTimeout(() => {
+                            code.textContent = originalText;
+                        }, 1500);
+                    }).catch(err => {
+                        console.error('Copy failed', err);
+                    });
+                });
+            });
+        });
+    </script>
+
+    <script type="module" src="/js/session-checker.js"></script>
+</body>
+
+</html>

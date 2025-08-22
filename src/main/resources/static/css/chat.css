@@ -1,0 +1,490 @@
+/* ============ Base layout ============ */
+form * { margin: unset !important; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+footer {
+  flex-shrink: 0 !important;
+  padding: 10px 0 !important;
+  margin-top: 10px;
+}
+
+/* Chat Area */
+.chat {
+  overflow: scroll;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Message List */
+#messageArea {
+  flex-grow: 1;
+  overflow-y: auto;
+  background-color: var(--dark-bg);
+  border-radius: var(--radius);
+  margin: 10px 0;
+  padding: 10px;
+  font-family: "Segoe UI","Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#messageArea li {
+  list-style: none;
+  max-width: 100%;
+}
+
+/* Meta row */
+#messageArea .msg-meta {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0 8px 0 0;
+  vertical-align: baseline;
+}
+#messageArea .msg-time {
+  font-size: 11px;
+  opacity: .6;
+  letter-spacing: .2px;
+}
+
+/* Bubble wrapping */
+#messageArea .msg-bubble {
+  display: inline-block;
+  width: max-content;
+  max-width: min(70ch, 92%);
+  vertical-align: baseline;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Universal Emoji Styling */
+#messageArea li span.emoji,
+#messageArea li img.emoji,
+#messageArea li .emoji {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  object-fit: contain !important;
+  min-width: 10px !important;
+  min-height: 10px !important;
+  max-width: 75px !important;
+  max-height: 75px !important;
+  width: auto !important;
+  height: auto !important;
+  line-height: 1 !important;
+}
+
+#messageArea li { font-size: 16px; line-height: 1.5; }
+
+/* ===================== */
+/* ==== INPUT AREA ===== */
+/* ===================== */
+.chat-controls {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin-bottom: 10px;
+}
+
+#chatForm { display: flex !important; width: 100% !important; }
+
+/* Flatten wrappers */
+.chat-controls > div { display: contents; }
+
+.input-and-buttons-container {
+  display: flex !important;
+  flex-grow: 1 !important;
+  align-items: stretch !important;
+  gap: 6px !important;
+  width: 100%;
+}
+
+#messageInputContainer { position: relative; flex: 1 1 auto; display: block; }
+
+/* --- Height variable for sync --- */
+:root{
+  --chat-line: 1.45em;
+  --chat-pad-y: 8px;
+  --chat-minh: calc(var(--chat-line) + (2 * var(--chat-pad-y)));
+}
+
+/* Chat input as textarea */
+#messageInput {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--dark-bg);
+  color: var(--text);
+  padding: var(--chat-pad-y) 10px;
+  line-height: 1.45;
+  resize: none;
+  overflow-y: auto;
+  max-height: calc((var(--chat-line) * 3) + (2 * var(--chat-pad-y)));
+  min-height: var(--chat-minh);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background-clip: padding-box;
+  height: auto;
+}
+
+/* Stretch siblings to same height */
+.input-and-buttons-container > * { align-self: stretch; }
+
+/* Buttons look */
+.chat .input-and-buttons-container > button,
+.chat .input-and-buttons-container > input[type="button"],
+.chat .input-and-buttons-container > input[type="submit"],
+.chat .input-and-buttons-container > #emojiToggleBtn,
+.chat .input-and-buttons-container > #uploadBtn {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+}
+
+/* Unified button look */
+.chat-controls button,
+.chat-controls input[type="button"],
+.chat-controls input[type="submit"] {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0 12px;
+  min-height: var(--chat-minh);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,.2);
+  transition: background .15s ease, transform .05s ease;
+}
+
+.chat-controls button:hover {
+  background: color-mix(in srgb, var(--accent) 85%, #000);
+}
+.chat-controls button:active {
+  transform: translateY(1px);
+}
+
+#emojiToggleBtn {
+  inline-size: 44px;
+  padding: 0;
+  font-size: 18px;
+}
+
+#fileInput { display: none; }
+
+/* ===================== */
+/* ===== Emoji UI ====== */
+/* ===================== */
+
+/* Emoji Picker */
+#emojiPicker {
+  background-color: var(--main-bg) !important;
+  position: absolute !important;
+  bottom: 100% !important;
+  right: 0 !important;
+  width: 210px !important;
+  max-height: 300px !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-start !important;
+  align-content: flex-start !important;
+  border: 1px solid var(--border-color);
+  border-radius: 5px !important;
+  padding: 5px !important;
+  z-index: 1000 !important;
+  overflow-y: auto !important;
+  display: none;
+}
+
+#emojiPicker .emoji-button {
+  flex: 0 0 45px !important;
+  width: 45px !important;
+  height: 45px !important;
+  margin: 2px !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  border-radius: 6px;
+  background: transparent;
+}
+
+/* Hard reset images inside emoji picker so they center correctly */
+#emojiPicker .emoji-button img {
+  width: auto !important;
+  height: auto !important;
+  max-width: 28px !important;
+  max-height: 28px !important;
+  margin: 0 !important;
+  display: block !important;
+  object-fit: contain !important;
+}
+
+button.emoji-button:hover { background-color: var(--light-bg) !important; }
+
+/* Suggestion Box */
+#suggestionBox {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-5px);
+  z-index: 1000;
+  display: none;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 5px;
+  border-radius: 6px;
+  font-family: monospace;
+  background-color: var(--main-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+.emoji-suggestion, .mention-suggestion {
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  background-color: var(--dark-bg) !important;
+  margin: 5px 3px !important;
+}
+.emoji-suggestion:last-child, .mention-suggestion:last-child { border-bottom: none; }
+.emoji-suggestion:hover { background-color: var(--border-color) !important; }
+
+/* Hard reset images inside suggestion rows so they don't skew */
+#suggestionBox .emoji-suggestion img.emoji {
+  width: auto !important;
+  height: auto !important;
+  max-width: 28px !important;
+  max-height: 28px !important;
+  margin: 0 !important;
+  display: inline-block !important;
+  object-fit: contain !important;
+  vertical-align: middle !important;
+}
+
+/* Remove the global img rule that caused skewing
+   (Intentionally omitted any `img { ... }` global styles) */
+
+/* If you want large images ONLY inside messages, keep it scoped: */
+#messageArea .msg-bubble img:not(.emoji),
+#messageArea .msg-bubble video {
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+/* Optional: if you need a media wrapper */
+#messageArea .msg-media {
+  max-width: 260px !important;
+  border-radius: 12px;
+  background: var(--light-bg);
+}
+
+/* Message text + emoji sizes in bubbles */
+#messageArea .msg-bubble .msg-text {
+  display: inline;
+  color: inherit;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+#messageArea .msg-bubble .emoji {
+  display: inline-block !important;
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  max-width: 30px !important;
+  max-height: 30px !important;
+  object-fit: fill !important;
+  vertical-align: middle !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+}
+
+#messageArea .msg-bubble.emoji-single {
+  text-align: center;
+}
+
+#messageArea .msg-bubble.emoji-single .emoji {
+  width: 100px !important;
+  height: 100px !important;
+  max-width: 100px !important;   /* <-- add */
+  max-height: 100px !important;  /* <-- add */
+  object-fit: contain !important; /* <-- avoid distortion from fill */
+}
+
+
+#messageArea .msg-bubble.emoji-only .emoji {
+  margin: 0 !important;
+}
+
+/* ============ Modes ============ */
+.chat--pro #messageArea li {
+  display: grid;
+  grid-template-rows: auto auto;
+  justify-self: start;
+  max-width: 100%;
+}
+.chat--pro #messageArea li.from-me { justify-self: end; }
+
+.chat--pro #messageArea .msg-bubble {
+  position: relative;
+  padding: 10px 12px;
+  border-radius: 18px;
+  background: var(--light-bg);
+  color: var(--text);
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+  overflow: hidden;
+}
+
+:root.theme-light .chat--pro #messageArea .msg-bubble {
+  background: #f3f6fb;
+  box-shadow: 0 1px 6px rgba(16,24,39,0.06);
+}
+
+:root.theme-light .chat--pro #messageArea li.from-me .msg-bubble {
+  background: #3b82f6; color: #fff;
+}
+:root:not(.theme-light) .chat--pro #messageArea li.from-me .msg-bubble {
+  background: linear-gradient(180deg, #2a74ff, #1e63e9);
+  color: #eaf2ff;
+}
+
+:root.theme-light .chat--pro #messageArea li.from-them .msg-bubble {
+  background: #eef2f7; color: var(--text);
+}
+:root:not(.theme-light) .chat--pro #messageArea li.from-them .msg-bubble {
+  background: #2b2f35; color: #d9e1f2;
+}
+
+/* Tails */
+.chat--pro #messageArea li.from-me .msg-bubble::after,
+.chat--pro #messageArea li.from-them .msg-bubble::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 10px; height: 10px;
+  background: inherit;
+}
+.chat--pro #messageArea li.from-me .msg-bubble::after {
+  right: -3px; clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+.chat--pro #messageArea li.from-them .msg-bubble::after {
+  left: -3px; clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+.chat--pro #messageArea li.from-me { align-items: end; }
+.chat--pro #messageArea li.from-them { align-items: start; }
+.chat--pro #messageArea li.from-me .msg-meta { justify-content: flex-end; }
+.chat--pro #messageArea li.from-them .msg-meta { justify-content: flex-start; }
+
+.chat--pro #messageArea .msg-bubble > * + * { margin-top: 4px; }
+
+.chat--pro #messageArea .msg-bubble { max-width: 70ch; }
+
+.chat--pro #messageArea .msg-bubble .msg-text { text-shadow: none !important; }
+
+/* IRC */
+.chat--irc #messageArea li { display: block; }
+.chat--irc #messageArea .msg-bubble {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.chat--irc #messageArea li {
+  border-bottom: 1px dashed var(--border-color);
+  padding: 6px 0;
+}
+.chat--irc #messageArea li:last-child { border-bottom: none; }
+.chat--irc #messageArea .msg-meta {
+  gap: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  margin-right: 6px;
+}
+.chat--irc #messageArea .msg-time { opacity: .7; }
+.chat--irc #messageArea .msg-bubble .msg-text { color: var(--text); }
+
+#messageArea .msg-bubble .msg-text mark.mention {
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+  padding: 0 3px;
+  border-radius: 3px;
+}
+
+.chat--irc #messageArea .msg-media { max-width: 220px !important; }
+
+.chat--pro #messageArea li.from-me {
+  justify-self: end;
+  text-align: right;
+}
+.chat--pro #messageArea li.from-me .msg-meta { justify-content: flex-end; }
+.chat--pro #messageArea li.from-me .msg-bubble { margin-left: auto; }
+
+/* Meta overlap fix */
+#messageArea .msg-meta {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0 8px 0 0;
+}
+#messageArea .msg-meta .msg-time {
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+#messageArea .msg-meta .message-sender {
+  max-width: 55vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat--irc #messageArea li { white-space: normal; }
+.chat--irc #messageArea .msg-bubble { margin-left: 6px; }
+
+/* Bubble clean-up */
+#messageArea .msg-bubble {
+  border: none !important;
+  outline: none !important;
+  overflow: visible;
+  border-radius: 18px;
+  background-clip: padding-box;
+  box-shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+:root.theme-light .chat--pro #messageArea .msg-bubble {
+  border: none !important;
+  box-shadow: 0 1px 6px rgba(16,24,39,0.06);
+}
+.chat--pro #messageArea li.from-me .msg-bubble::after,
+.chat--pro #messageArea li.from-them .msg-bubble::after {
+  position: absolute;
+  bottom: 0;
+  width: 10px;
+  height: 10px;
+  background: inherit;
+  content: "";
+}
+
+#messageArea li { border: none; }
+.chat--irc #messageArea li { border-bottom: 1px dashed var(--border-color); }
+.chat--irc #messageArea .msg-bubble { background: transparent; box-shadow: none; }

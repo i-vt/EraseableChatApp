@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <th:block th:replace="~{fragments/header :: head}"></th:block>
+  <link rel="stylesheet" th:href="@{/css/register.css}" />
+  <script defer th:src="@{/js/register.js}"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register</title>
+</head>
+
+<body>
+  <div th:replace="~{fragments/header :: header}"></div>
+
+  <main id="container">
+    <section id="register" aria-labelledby="register-title">
+      <h2 id="register-title">Register</h2>
+
+      <form th:action="@{/register}" method="post" autocomplete="off" novalidate>
+        <div class="form-row">
+          <label for="reg-code">Registration Code</label><br />
+          <input
+            id="reg-code"
+            type="text"
+            name="code"
+            required
+            minlength="6"
+            maxlength="64"
+            autocomplete="one-time-code"
+            inputmode="text"
+            autocapitalize="off"
+            spellcheck="false"
+          />
+        </div>
+
+        <div class="form-row">
+          <label for="reg-password">Choose Password</label><br />
+          <input
+            id="reg-password"
+            type="password"
+            name="password"
+            required
+            minlength="8"
+            maxlength="64"
+            pattern="^[A-Za-z0-9]+$"
+            title="Use only letters and numbers (A–Z, a–z, 0–9). No spaces or special characters."
+            autocomplete="new-password"
+            inputmode="text"
+            autocapitalize="off"
+            spellcheck="false"
+            aria-describedby="password-help password-warning"
+          />
+          <small id="password-help" class="field-help">
+            Allowed characters: letters and numbers only. No spaces or special characters.
+          </small>
+          <div id="password-warning" class="field-warning" role="alert" aria-live="polite" hidden></div>
+        </div>
+
+        <div class="tooltip-box" aria-live="polite">
+          Toggle "Auto-Register": accepts either an autofilled password or generates a new one, then registers automatically after 2 seconds (only if valid).
+        </div>
+
+        <div class="checkbox-row">
+          <label>
+            <input type="checkbox" id="autoRegisterCheckbox" />
+            Enable Auto-Register
+          </label>
+        </div>
+
+        <div class="btn-row">
+          <button type="submit">Register</button>
+        </div>
+
+        <div th:if="${error}">
+          <p class="server-error" th:text="${error}"></p>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

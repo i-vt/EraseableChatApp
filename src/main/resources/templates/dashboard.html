@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<head th:replace="~{fragments/header :: head}"></head>
+
+<body>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+
+  <div th:replace="~{fragments/header :: header}"></div>
+
+  <section class="dashbaord">
+    <h2>Welcome to the Dashboard!</h2>
+    <p th:text="'Logged in as: ' + ${session.user}"></p>
+
+    <h3>Change Username</h3>
+    <form th:action="@{/change-username}" method="post" autocomplete="off">
+      <input type="text" name="newUsername" placeholder="New Username" required autocomplete="off">
+      <button type="submit">Change Username</button>
+    </form>
+
+    <div th:if="${error}" class="error">
+      <p th:text="${error}"></p>
+    </div>
+
+    <h3>All Users Status</h3>
+    <table border="1">
+      <tr>
+        <th>Username</th>
+        <th>Status</th>
+        <th>Last Online (UTC)</th>
+      </tr>
+      <tr th:each="user : ${users}">
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.status}"></td>
+        <td th:text="${#dates.format(user.lastOnlineUtc, 'yyyy-MM-dd HH:mm:ss')}"></td>
+      </tr>
+    </table>
+
+    <h3>Registration Codes Left</h3>
+    <p th:text="${codesLeft} + ' unused code(s)'"></p>
+
+    <h3>User Activity Log</h3>
+    <ul>
+      <li th:each="entry : ${activityLog}" th:text="${entry}"></li>
+    </ul>
+
+    <!-- Simple Help card pointing to the Tutorial -->
+    <section class="help-card">
+      <h3>New here?</h3>
+      <p>
+        Visit the <strong>Tutorial</strong> for chat styles, grouping behavior, uploads,
+        P2P share, and the complete list of <em>keyboard shortcuts</em>.
+      </p>
+      <a class="btn" th:href="@{/tutorial}">Open Tutorial</a>
+    </section>
+  </section>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).catch(() => {});
+    }
+
+    function flashCopied(element, originalText) {
+      element.textContent = 'Copied';
+      setTimeout(() => {
+        element.textContent = originalText;
+      }, 2000);
+    }
+
+    document.querySelectorAll('table td:nth-child(1)').forEach(td => {
+      td.addEventListener('click', () => {
+        const username = td.textContent.trim();
+        copyToClipboard(username);
+        flashCopied(td, username);
+      });
+    });
+
+    const formats = ['iso', 'day', 'localTime'];
+
+    function setupTimeToggle(element, originalIsoText) {
+      element.dataset.originalTime = originalIsoText;
+      element.dataset.currentFormatIndex = '0';
+
+      element.addEventListener('click', () => {
+        const originalTime = element.dataset.originalTime;
+        let currentFormatIndex = parseInt(element.dataset.currentFormatIndex, 10);
+        currentFormatIndex = (currentFormatIndex + 1) % formats.length;
+
+        let newText = originalTime;
+        try {
+          const date = new Date(originalTime);
+          if (formats[currentFormatIndex] === 'day') {
+            newText = date.toISOString().slice(0, 10);
+          } else if (formats[currentFormatIndex] === 'localTime') {
+            newText = date.toLocaleString('en-US', {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: true
+            });
+          }
+        } catch (e) {
+          console.error("Error parsing date for time toggle:", e);
+        }
+
+        element.textContent = newText;
+        element.dataset.currentFormatIndex = currentFormatIndex.toString();
+      });
+    }
+
+    document.querySelectorAll('table td:nth-child(3)').forEach(td => {
+      setupTimeToggle(td, td.textContent.trim());
+    });
+
+    const logItems = document.querySelectorAll('section.dashbaord ul li');
+    const isoRegex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z/g;
+    const usernameRegex = /^([\w.-]+_[\w-]+)/;
+
+    logItems.forEach(li => {
+      let html = li.innerHTML;
+      let timestampMatches = [...html.matchAll(isoRegex)];
+      if (timestampMatches.length) {
+        timestampMatches.reverse().forEach(m => {
+          const timestamp = m[0];
+          const wrapped = `<span>${timestamp}</span>`;
+          const start = m.index;
+          const end = start + timestamp.length;
+          html = html.slice(0, start) + wrapped + html.slice(end);
+        });
+      }
+
+      const usernameMatch = html.match(usernameRegex);
+      if (usernameMatch && usernameMatch[1]) {
+        const username = usernameMatch[1];
+        const wrappedUsername = `<span>${username}</span>`;
+        html = html.replace(username, wrappedUsername);
+      }
+
+      li.innerHTML = html;
+
+      li.querySelectorAll('span').forEach(span => {
+        const text = span.textContent.trim();
+        if (isoRegex.test(text)) {
+          setupTimeToggle(span, text);
+        } else {
+          span.addEventListener('click', () => {
+            copyToClipboard(text);
+            flashCopied(span, text);
+          });
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  .dashbaord {
+    margin: 20px auto;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .dashbaord input {
+    background-color: var(--light-bg);
+    border: none;
+    color: var(--text);
+    padding: 8px 15px;
+    border-radius: 5px;
+  }
+
+  .dashbaord button {
+    border-radius: 5px;
+    background-color: var(--accent);
+    border: none;
+    padding: 8px 15px;
+  }
+
+  .dashbaord form {
+    display: flex;
+    gap: 10px;
+  }
+
+  .dashbaord form input {
+    flex: 1;
+  }
+
+  code,
+  kbd {
+    padding: 2px 8px;
+    margin: 2px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background-color: var(--dark-bg) !important;
+  }
+
+  li {
+    margin: 10px;
+  }
+
+  li::marker {
+    color: var(--accent);
+  }
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 16px;
+    margin: 0 auto;
+    width: 100%;
+    border: 0px;
+  }
+
+  td {
+    font-size: 14px;
+  }
+
+  td,
+  th {
+    padding: 5px 10px;
+    border: none;
+  }
+
+  th {
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  th:first-child {
+    border-top-left-radius: var(--radius);
+  }
+
+  th:last-child {
+    border-top-right-radius: var(--radius);
+  }
+
+  /* Right borders for all cells except last column */
+  td:not(:last-child),
+  th:not(:last-child) {
+    border-right: var(--table-border-width) solid var(--border-color);
+  }
+
+  /* Bottom borders for tbody rows (except last) and thead */
+  tbody tr:not(:last-child) td,
+  thead tr th {
+    border-bottom: var(--table-border-width) solid var(--border-color);
+  }
+
+  /* Left borders for first column */
+  tr td:first-child,
+  tr th:first-child {
+    border-left: var(--table-border-width) solid var(--border-color);
+  }
+
+  /* Right borders for last column */
+  tr td:last-child,
+  tr th:last-child {
+    border-right: var(--table-border-width) solid var(--border-color);
+  }
+
+  /* Bottom border for last row */
+  tbody tr:last-child td {
+    border-bottom: var(--table-border-width) solid var(--border-color);
+  }
+
+  /* Top borders for header and first body row */
+  thead tr th,
+  tbody tr:first-child td {
+    border-top: var(--table-border-width) solid var(--border-color);
+  }
+
+  /* Header background */
+  thead tr th {
+    background-color: var(--dark-bg);
+  }
+
+  /* Alternating row colors */
+  tbody tr:nth-of-type(2n) td {
+    background-color: var(--dark-bg);
+  }
+
+  /* Rounded corners - top left */
+  thead tr th:first-child,
+  tbody tr:first-child td:first-child {
+    border-top-left-radius: var(--radius);
+  }
+
+  /* Rounded corners - top right */
+  thead tr th:last-child,
+  tbody tr:first-child td:last-child {
+    border-top-right-radius: var(--radius);
+  }
+
+  /* Rounded corners - bottom left */
+  tbody tr:last-child td:first-child {
+    border-bottom-left-radius: var(--radius);
+  }
+
+  /* Rounded corners - bottom right */
+  tbody tr:last-child td:last-child {
+    border-bottom-right-radius: var(--radius);
+  }
+
+  /* Help card styling */
+  .help-card {
+    background: var(--light-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+
+  .help-card h3 {
+    margin: 0 0 8px 0;
+    color: var(--heading);
+  }
+
+  .help-card p {
+    margin: 0 0 12px 0;
+  }
+
+  .help-card .btn {
+    display: inline-block;
+    background-color: var(--accent);
+    color: var(--dark-bg);
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 6px;
+  }
+
+  .help-card .btn:hover {
+    opacity: .9;
+  }
+</style>
+
+<script type="module" src="/js/session-checker.js"></script>

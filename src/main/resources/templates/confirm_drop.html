@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<head th:replace="~{fragments/header :: head}"></head>
+
+<body>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main>
+        <style>
+            main {
+                max-width: 600px;
+                margin: 60px auto;
+                background-color: var(--light-bg);
+                padding: 2rem;
+                border-radius: var(--radius);
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            h2 {
+                color: var(--heading);
+                margin-bottom: 1rem;
+            }
+
+            main ul {
+                background-color: var(--dark-bg);
+                padding: 1rem 1.5rem;
+                border-radius: var(--radius);
+                border: 1px solid var(--border-color);
+            }
+
+            li {
+                margin-bottom: 0.5rem;
+            }
+
+            p {
+                margin: 0.5rem 0;
+            }
+
+            form {
+                display: flex;
+                justify-content: center;
+            }
+
+            button {
+                background-color: var(--accent);
+                color: var(--dark-bg);
+                padding: 0.75rem 1.25rem;
+                border: none;
+                border-radius: var(--radius);
+                font-weight: bold;
+                cursor: pointer;
+            }
+
+            button:hover {
+                opacity: 0.9;
+            }
+        </style>
+        <h2>Danger Zone: DROP ALL DATA</h2>
+        <p>This will:</p>
+        <ul>
+            <li>Delete all uploaded files</li>
+            <li>Log out all users</li>
+            <li>Delete all registration codes</li>
+            <li>Delete all user accounts</li>
+        </ul>
+        <p><strong>This action is irreversible.</strong></p>
+        <form th:action="@{/drop}" method="post">
+            <button type="submit">Confirm & Drop Everything</button>
+        </form>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>
