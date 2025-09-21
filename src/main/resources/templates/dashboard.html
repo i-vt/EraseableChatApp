@@ -13,15 +13,20 @@
     <h2>Welcome to the Dashboard!</h2>
     <p th:text="'Logged in as: ' + ${session.user}"></p>
 
+    <!-- Success/Error Messages -->
+    <div th:if="${success}" class="success">
+      <p th:text="${success}"></p>
+    </div>
+    
+    <div th:if="${error}" class="error">
+      <p th:text="${error}"></p>
+    </div>
+
     <h3>Change Username</h3>
     <form th:action="@{/change-username}" method="post" autocomplete="off">
       <input type="text" name="newUsername" placeholder="New Username" required autocomplete="off">
       <button type="submit">Change Username</button>
     </form>
-
-    <div th:if="${error}" class="error">
-      <p th:text="${error}"></p>
-    </div>
 
     <h3>All Users Status</h3>
     <table border="1">
@@ -37,8 +42,20 @@
       </tr>
     </table>
 
-    <h3>Registration Codes Left</h3>
+    <h3>Registration Codes Management</h3>
     <p th:text="${codesLeft} + ' unused code(s)'"></p>
+    
+    <h4>Revoke Specific Code</h4>
+    <form th:action="@{/revoke-code}" method="post" autocomplete="off">
+      <input type="text" name="code" placeholder="Enter registration code" required autocomplete="off">
+      <button type="submit" th:disabled="${codesLeft == 0}">Revoke Code</button>
+    </form>
+
+    <h4>Revoke All Codes</h4>
+    <form th:action="@{/expire-codes}" method="post" 
+          onsubmit="return confirm('Are you sure you want to expire ALL registration codes? This cannot be undone.');">
+      <button type="submit" class="danger-btn" th:disabled="${codesLeft == 0}">Expire All Codes</button>
+    </form>
 
     <h3>User Activity Log</h3>
     <ul>
@@ -195,6 +212,46 @@
 
   .dashbaord form input {
     flex: 1;
+  }
+
+  /* Message styling */
+  .success {
+    background-color: color-mix(in srgb, #4caf50 20%, var(--dark-bg));
+    border: 1px solid #4caf50;
+    border-radius: var(--radius);
+    padding: 10px 15px;
+    color: #4caf50;
+    margin: 10px 0;
+  }
+
+  .error {
+    background-color: color-mix(in srgb, #f44336 20%, var(--dark-bg));
+    border: 1px solid #f44336;
+    border-radius: var(--radius);
+    padding: 10px 15px;
+    color: #f44336;
+    margin: 10px 0;
+  }
+
+  .danger-btn {
+    background-color: #f44336 !important;
+    color: white !important;
+  }
+
+  .danger-btn:hover:not(:disabled) {
+    background-color: #d32f2f !important;
+  }
+
+  button:disabled {
+    background-color: #666 !important;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .expire-warning {
+    font-size: 14px;
+    color: #ff9800;
+    margin: 5px 0 0 0;
   }
 
   code,
