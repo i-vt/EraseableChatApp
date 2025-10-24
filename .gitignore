@@ -5,6 +5,14 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+## Docker
+# .dockerignore
+*.key
+*.p12
+*.crt
+*.pem
+
+
 ### STS ###
 .apt_generated
 .classpath
