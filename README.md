@@ -39,3 +39,9 @@ cd ~/chatapp/chatapp/; pkill -f 'gradlew.*bootRun' ; nohup ./gradlew bootRun --a
 ```
 cd ~/chatapp/chatapp/; pkill -f 'gradlew.*bootRun' ; nohup ./gradlew bootRun --args='--spring.profiles.active=prod' > /dev/null 2>&1 & sleep 2; ps aux | grep [g]radlew; sleep 15; cat codes.txt
 ```
+
+## Containerized Setup
+- Build & run the HTTP development container: `./scripts/install.sh dev`
+- Build & run the HTTPS production container (requires PKCS12 keystore): `./scripts/install.sh prod --cert-path /absolute/path/to/keystore.p12 [--cert-password your_password]`
+
+The script uses Docker to compile the project image, binds port 8080 for dev and 8443 (host default 443) for prod, and mounts your TLS material read-only. Add `--no-build` if you have already built the image, and `--host-port` to override the exposed port.
